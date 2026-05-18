@@ -6,6 +6,7 @@ import Navbar from '@/components/storefront/Navbar';
 import { CreditCard, Truck, ShieldCheck, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function CheckoutPage() {
   const { cart, cartTotal, clearCart, addOrder } = useCart();
@@ -18,7 +19,7 @@ export default function CheckoutPage() {
       toast.error('Please login to proceed with checkout');
       router.push('/login?redirect=/checkout');
     }
-  }, []);
+  }, [router]);
 
   const [formData, setFormData] = useState({
     address: '',
@@ -146,7 +147,7 @@ export default function CheckoutPage() {
                 <div key={item._id} className="flex justify-between items-center">
                   <div className="flex items-center space-x-4">
                     <div className="relative w-16 h-16 bg-gray-50 rounded-xl overflow-hidden">
-                      <img src={item.image} alt="" className="object-cover w-full h-full" />
+                      <Image src={item.image} alt={item.name} fill className="object-cover" />
                     </div>
                     <div>
                       <p className="font-bold text-slate-900">{item.name}</p>

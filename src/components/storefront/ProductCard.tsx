@@ -13,7 +13,7 @@ interface ProductCardProps {
     name: string;
     price: number;
     category: string;
-    images: { url: string; public_id: string }[];
+    images: { url: string; public_id?: string }[];
   };
 }
 

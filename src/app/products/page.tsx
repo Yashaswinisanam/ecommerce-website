@@ -6,8 +6,16 @@ import Navbar from '@/components/storefront/Navbar';
 import ProductCard from '@/components/storefront/ProductCard';
 import { Filter, ChevronDown } from 'lucide-react';
 
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  images: { url: string }[];
+  category: string;
+}
+
 export default function ProductsPage() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -57,7 +65,7 @@ export default function ProductsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {products.map((product: any) => (
+            {products.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
           </div>

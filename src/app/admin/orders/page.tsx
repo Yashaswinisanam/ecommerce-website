@@ -1,12 +1,24 @@
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ShoppingBag, ChevronRight, CheckCircle, Clock, Truck, XCircle } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+interface Order {
+  _id: string;
+  user?: {
+    name?: string;
+    email?: string;
+  };
+  createdAt?: string;
+  status?: string;
+  paymentStatus?: string;
+  totalPrice?: number;
+  total?: number;
+}
+
 export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,7 +26,7 @@ export default function AdminOrdersPage() {
       try {
         const { data } = await axios.get('/api/admin/orders');
         setOrders(data);
-      } catch (error) {
+      } catch {
         toast.error('Failed to load orders');
       } finally {
         setLoading(false);
@@ -23,22 +35,12 @@ export default function AdminOrdersPage() {
     fetchOrders();
   }, []);
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'Delivered': return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'Processing': return <Clock className="w-4 h-4 text-orange-500" />;
-      case 'Shipped': return <Truck className="w-4 h-4 text-blue-500" />;
-      case 'Cancelled': return <XCircle className="w-4 h-4 text-red-500" />;
-      default: return <Clock className="w-4 h-4 text-slate-400" />;
-    }
-  };
-
   const updateOrderStatus = async (id: string, status: string) => {
     try {
       await axios.patch(`/api/admin/orders/${id}`, { status });
       toast.success('Status updated');
-      setOrders((prev: any) => prev.map((o: any) => o._id === id ? { ...o, status } : o));
-    } catch (e) {
+      setOrders((prev) => prev.map((o) => o._id === id ? { ...o, status } : o));
+    } catch {
       toast.error('Update failed');
     }
   };
@@ -47,11 +49,19 @@ export default function AdminOrdersPage() {
     try {
       await axios.patch(`/api/admin/orders/${id}`, { paymentStatus });
       toast.success('Payment updated');
-      setOrders((prev: any) => prev.map((o: any) => o._id === id ? { ...o, paymentStatus } : o));
-    } catch (e) {
+      setOrders((prev) => prev.map((o) => o._id === id ? { ...o, paymentStatus } : o));
+    } catch {
       toast.error('Update failed');
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -67,7 +77,7 @@ export default function AdminOrdersPage() {
              <p className="text-slate-400 font-bold text-lg">No orders to display</p>
           </div>
         ) : (
-          orders.map((order: any) => (
+          orders.map((order) => (
             <div key={order._id} className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                 <div className="flex items-center space-x-6">
@@ -76,7 +86,7 @@ export default function AdminOrdersPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-black text-slate-900 tracking-tight">Order #{order._id.substring(0, 8).toUpperCase()}</h3>
-                    <p className="text-slate-500 font-bold">{order.user?.name || 'Guest User'} • {new Date(order.createdAt || Date.now()).toLocaleDateString()}</p>
+                    <p className="text-slate-500 font-bold">{order.user?.name || 'Guest User'} • {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}</p>
                   </div>
                 </div>
 

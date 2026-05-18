@@ -8,7 +8,17 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const { status, paymentStatus } = await req.json();
 
     if (!process.env.MONGODB_URI) {
-       return NextResponse.json({ message: 'Updated (Demo Mode)' });
+       const mockOrders = (global as unknown as { mockOrders?: { _id?: string; id?: string; status?: string; paymentStatus?: string }[] }).mockOrders || [];
+       const orderIndex = mockOrders.findIndex((o) => o._id === id || o.id === id);
+       
+       if (orderIndex === -1) {
+         return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+       }
+       
+       if (status) mockOrders[orderIndex].status = status;
+       if (paymentStatus) mockOrders[orderIndex].paymentStatus = paymentStatus;
+       
+       return NextResponse.json(mockOrders[orderIndex]);
     }
 
     await connectDB();
@@ -20,7 +30,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     await order.save();
     return NextResponse.json(order);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Update failed' }, { status: 500 });
   }
 }

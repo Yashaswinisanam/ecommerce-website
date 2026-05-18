@@ -5,18 +5,29 @@ import axios from 'axios';
 import { Plus, Edit, Trash2, Package } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ProductModal from '@/components/admin/ProductModal';
+import Image from 'next/image';
+
+interface Product {
+  _id: string;
+  name: string;
+  description: string;
+  category: string;
+  price: number;
+  stock: number;
+  images?: { url: string }[];
+}
 
 export default function AdminProductsPage() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const fetchProducts = async () => {
     try {
       const { data } = await axios.get('/api/admin/products');
       setProducts(data);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load products');
     } finally {
       setLoading(false);
@@ -24,7 +35,9 @@ export default function AdminProductsPage() {
   };
 
   useEffect(() => {
-    fetchProducts();
+    setTimeout(() => {
+      fetchProducts();
+    }, 0);
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -33,12 +46,12 @@ export default function AdminProductsPage() {
       await axios.delete(`/api/admin/products/${id}`);
       toast.success('Product deleted');
       fetchProducts();
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete product');
     }
   };
 
-  const handleEdit = (product: any) => {
+  const handleEdit = (product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
@@ -87,13 +100,13 @@ export default function AdminProductsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {products.map((product: any) => (
+              {products.map((product) => (
                 <tr key={product._id} className="hover:bg-slate-50/50 transition">
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0">
+                      <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 relative">
                         {product.images?.[0] ? (
-                          <img src={product.images[0].url} alt="" className="w-full h-full object-cover" />
+                          <Image src={product.images[0].url} alt={product.name} width={48} height={48} className="w-full h-full object-cover" />
                         ) : (
                           <Package className="w-full h-full p-3 text-slate-300" />
                         )}

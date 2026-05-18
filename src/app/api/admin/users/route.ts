@@ -13,7 +13,7 @@ export async function GET() {
     await connectDB();
     const users = await User.find().sort({ createdAt: -1 });
     return NextResponse.json(users);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
   }
 }

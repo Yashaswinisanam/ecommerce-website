@@ -23,7 +23,7 @@ export default function CartPage() {
               <ShoppingBag className="w-10 h-10 text-slate-300" />
             </div>
             <h2 className="text-2xl font-bold text-slate-900 mb-2">Cart is empty</h2>
-            <p className="text-slate-500 mb-8">Looks like you haven't added anything yet.</p>
+            <p className="text-slate-500 mb-8">Looks like you haven&apos;t added anything yet.</p>
             <Link href="/products" className="bg-indigo-600 text-white px-8 py-4 rounded-full font-bold hover:bg-indigo-700 transition">
               Start Shopping
             </Link>

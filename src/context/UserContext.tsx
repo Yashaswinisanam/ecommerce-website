@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
@@ -25,12 +25,28 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const logout = useCallback(async () => {
+    setUser(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
+    try {
+       await axios.post('/api/auth/logout');
+    } catch {
+      // ignore
+    }
+    router.push('/');
+  }, [router]);
+
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      setTimeout(() => {
+        setUser(JSON.parse(savedUser));
+      }, 0);
     }
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 0);
     
     // Setup Axios Interceptor for token refresh
     const interceptor = axios.interceptors.response.use(
@@ -44,7 +60,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             localStorage.setItem('accessToken', data.accessToken);
             originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;
             return axios(originalRequest);
-          } catch (refreshError) {
+          } catch {
             logout();
           }
         }
@@ -53,22 +69,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     return () => axios.interceptors.response.eject(interceptor);
-  }, []);
+  }, [logout]);
 
   const login = (userData: User, token: string) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('accessToken', token);
-  };
-
-  const logout = async () => {
-    setUser(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('accessToken');
-    try {
-       await axios.post('/api/auth/logout');
-    } catch (e) {}
-    router.push('/');
   };
 
   return (

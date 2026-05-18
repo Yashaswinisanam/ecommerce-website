@@ -10,6 +10,29 @@ interface CartItem {
   image: string;
 }
 
+interface Order {
+  _id?: string;
+  id?: string;
+  user?: {
+    name?: string;
+    email?: string;
+  };
+  items?: CartItem[];
+  totalPrice?: number;
+  total?: number;
+  shippingAddress?: {
+    address: string;
+    city: string;
+    postalCode: string;
+    country: string;
+  };
+  paymentMethod?: string;
+  paymentStatus?: string;
+  status?: string;
+  createdAt?: string;
+  date?: string;
+}
+
 interface CartContextType {
   cart: CartItem[];
   addToCart: (item: CartItem) => void;
@@ -18,22 +41,30 @@ interface CartContextType {
   clearCart: () => void;
   cartTotal: number;
   cartCount: number;
-  orders: any[];
-  addOrder: (order: any) => void;
+  orders: Order[];
+  addOrder: (order: Order) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
-    if (savedCart) setCart(JSON.parse(savedCart));
+    if (savedCart) {
+      setTimeout(() => {
+        setCart(JSON.parse(savedCart));
+      }, 0);
+    }
     
     const savedOrders = localStorage.getItem('orders');
-    if (savedOrders) setOrders(JSON.parse(savedOrders));
+    if (savedOrders) {
+      setTimeout(() => {
+        setOrders(JSON.parse(savedOrders));
+      }, 0);
+    }
   }, []);
 
   useEffect(() => {
@@ -69,7 +100,13 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setCart([]);
   };
 
-  const addOrder = (order: any) => {
+  const addOrder = async (order: Order) => {
+    try {
+      // Sync with server API (for admin view)
+      await import('axios').then(axios => axios.default.post('/api/orders', order));
+    } catch (error) {
+      console.error('Failed to sync order with server', error);
+    }
     setOrders((prev) => [order, ...prev]);
   };
 

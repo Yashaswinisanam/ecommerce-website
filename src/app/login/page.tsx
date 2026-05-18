@@ -28,8 +28,12 @@ function LoginForm() {
       } else {
         router.push(redirect);
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Login failed');
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.error || 'Login failed');
+      } else {
+        toast.error('Login failed');
+      }
     } finally {
       setLoading(false);
     }
@@ -78,7 +82,7 @@ function LoginForm() {
         </form>
 
         <div className="mt-8 text-center text-sm text-gray-500">
-          Don't have an account? <Link href="/register" className="text-indigo-600 font-bold hover:underline">Register here</Link>
+          Don&apos;t have an account? <Link href="/register" className="text-indigo-600 font-bold hover:underline">Register here</Link>
         </div>
       </div>
     </div>

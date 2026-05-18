@@ -5,23 +5,30 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useUser } from '@/context/UserContext';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useUser();
   const router = useRouter();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('/api/auth/register', { name, email, password });
-      toast.success('Registered successfully! Please login.');
-      router.push('/login');
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Registration failed');
+      const { data } = await axios.post('/api/auth/register', { name, email, password });
+      toast.success('Registered successfully!');
+      login(data.user, data.accessToken);
+      router.push('/');
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.error || 'Registration failed');
+      } else {
+        toast.error('Registration failed');
+      }
     } finally {
       setLoading(false);
     }

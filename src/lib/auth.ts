@@ -1,21 +1,21 @@
 import jwt from 'jsonwebtoken';
-import { SignJWT, jwtVerify } from 'jose';
+import { jwtVerify } from 'jose';
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'access_secret';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'refresh_secret';
 
-export const signAccessToken = (payload: any) => {
+export const signAccessToken = (payload: object | string | Buffer) => {
   return jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
 };
 
-export const signRefreshToken = (payload: any) => {
+export const signRefreshToken = (payload: object | string | Buffer) => {
   return jwt.sign(payload, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 };
 
 export const verifyAccessToken = (token: string) => {
   try {
     return jwt.verify(token, ACCESS_TOKEN_SECRET);
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -23,7 +23,7 @@ export const verifyAccessToken = (token: string) => {
 export const verifyRefreshToken = (token: string) => {
   try {
     return jwt.verify(token, REFRESH_TOKEN_SECRET);
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -36,7 +36,7 @@ export const verifyAuthToken = async (token: string) => {
       new TextEncoder().encode(ACCESS_TOKEN_SECRET)
     );
     return payload;
-  } catch (error) {
+  } catch {
     return null;
   }
 };

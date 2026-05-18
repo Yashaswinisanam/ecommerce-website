@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
+import { signAccessToken, signRefreshToken } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
@@ -13,10 +14,24 @@ export async function POST(req: Request) {
 
     if (!process.env.MONGODB_URI) {
       console.warn('MONGODB_URI is missing. Using mock registration.');
-      return NextResponse.json({
+      const mockUser = { id: 'mock-user-id', name, email, role: 'user' };
+      const accessToken = signAccessToken({ id: mockUser.id, role: mockUser.role });
+      
+      const response = NextResponse.json({
         message: 'Registration successful',
-        user: { id: 'mock-user-id', name, email },
+        user: mockUser,
+        accessToken,
       }, { status: 201 });
+
+      response.cookies.set('accessToken', accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 15 * 60,
+        path: '/',
+      });
+
+      return response;
     }
 
     await connectDB();
@@ -34,11 +49,37 @@ export async function POST(req: Request) {
       password: hashedPassword,
     });
 
-    return NextResponse.json({
+    const payload = { id: user._id, role: user.role };
+    const accessToken = signAccessToken(payload);
+    const refreshToken = signRefreshToken(payload);
+
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    const response = NextResponse.json({
       message: 'User registered successfully',
-      user: { id: user._id, name: user.name, email: user.email },
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      accessToken,
     }, { status: 201 });
-  } catch (error: any) {
+
+    response.cookies.set('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 15 * 60,
+      path: '/',
+    });
+
+    response.cookies.set('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60,
+      path: '/',
+    });
+
+    return response;
+  } catch (error) {
     console.error('Registration Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }

@@ -80,7 +80,7 @@ export default function HomePage() {
               <Truck className="w-8 h-8 text-orange-600" />
             </div>
             <h3 className="text-xl font-bold mb-3">Global Shipping</h3>
-            <p className="text-slate-500">Wherever you are, we'll get your products to you quickly and safely.</p>
+            <p className="text-slate-500">Wherever you are, we&apos;ll get your products to you quickly and safely.</p>
           </div>
         </div>
       </section>

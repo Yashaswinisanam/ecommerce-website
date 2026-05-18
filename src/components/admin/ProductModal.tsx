@@ -4,12 +4,23 @@ import React, { useState, useEffect } from 'react';
 import { X, Upload, Package, DollarSign, Tag, Database } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
+
+interface Product {
+  _id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  stock: number;
+  images?: { url: string; public_id?: string }[];
+}
 
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  product?: any;
+  product?: Product | null;
 }
 
 export default function ProductModal({ isOpen, onClose, onSuccess, product }: ProductModalProps) {
@@ -20,28 +31,32 @@ export default function ProductModal({ isOpen, onClose, onSuccess, product }: Pr
     price: '',
     category: '',
     stock: '',
-    images: [] as any[],
+    images: [] as { url: string; public_id?: string }[],
   });
 
   useEffect(() => {
     if (product) {
-      setFormData({
-        name: product.name,
-        description: product.description,
-        price: product.price.toString(),
-        category: product.category,
-        stock: product.stock.toString(),
-        images: product.images || [],
-      });
+      setTimeout(() => {
+        setFormData({
+          name: product.name,
+          description: product.description,
+          price: product.price.toString(),
+          category: product.category,
+          stock: product.stock.toString(),
+          images: product.images || [],
+        });
+      }, 0);
     } else {
-      setFormData({
-        name: '',
-        description: '',
-        price: '',
-        category: '',
-        stock: '',
-        images: [],
-      });
+      setTimeout(() => {
+        setFormData({
+          name: '',
+          description: '',
+          price: '',
+          category: '',
+          stock: '',
+          images: [],
+        });
+      }, 0);
     }
   }, [product, isOpen]);
 
@@ -65,7 +80,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, product }: Pr
         }));
         setLoading(false);
       };
-    } catch (error) {
+    } catch {
       toast.error('Upload failed');
       setLoading(false);
     }
@@ -91,7 +106,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, product }: Pr
       }
       onSuccess();
       onClose();
-    } catch (error) {
+    } catch {
       toast.error('Action failed');
     } finally {
       setLoading(false);
@@ -191,7 +206,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, product }: Pr
             <div className="grid grid-cols-4 gap-4">
               {formData.images.map((img, idx) => (
                 <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden bg-slate-100 group">
-                  <img src={img.url} className="w-full h-full object-cover" />
+                  <Image src={img.url} alt="Product Preview" width={100} height={100} className="w-full h-full object-cover" unoptimized />
                   <button 
                     type="button"
                     onClick={() => setFormData({...formData, images: formData.images.filter((_, i) => i !== idx)})}

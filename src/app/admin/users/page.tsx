@@ -5,8 +5,16 @@ import axios from 'axios';
 import { User, Mail, Calendar, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  createdAt: string;
+}
+
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,7 +22,7 @@ export default function AdminUsersPage() {
       try {
         const { data } = await axios.get('/api/admin/users');
         setUsers(data);
-      } catch (error) {
+      } catch {
         toast.error('Failed to load users');
       } finally {
         setLoading(false);
@@ -22,6 +30,14 @@ export default function AdminUsersPage() {
     };
     fetchUsers();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -41,7 +57,7 @@ export default function AdminUsersPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {users.map((user: any) => (
+            {users.map((user) => (
               <tr key={user._id} className="hover:bg-slate-50/50 transition">
                 <td className="px-6 py-4">
                   <div className="flex items-center space-x-3">

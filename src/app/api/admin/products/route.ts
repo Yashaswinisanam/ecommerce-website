@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Product from '@/models/Product';
-import cloudinary from '@/lib/cloudinary';
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     if (!process.env.MONGODB_URI) {
       console.warn('MONGODB_URI is missing. Returning mock data.');

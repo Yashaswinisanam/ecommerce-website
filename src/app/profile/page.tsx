@@ -5,25 +5,35 @@ import Navbar from '@/components/storefront/Navbar';
 import { useCart } from '@/context/CartContext';
 import { Package, User, ShoppingBag, ChevronRight, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import Image from 'next/image';
+
+interface UserProfile {
+  name: string;
+  email: string;
+  role: string;
+}
 
 export default function ProfilePage() {
   const { orders } = useCart();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const router = useRouter();
+
+  const { logout } = useUser();
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      setTimeout(() => {
+        setUser(JSON.parse(savedUser));
+      }, 0);
     } else {
       router.push('/login');
     }
-  }, []);
+  }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
-    router.push('/login');
+    logout();
   };
 
   if (!user) return null;
@@ -79,7 +89,7 @@ export default function ProfilePage() {
               <div className="bg-white p-16 rounded-[40px] text-center border border-gray-100">
                 <Package className="w-16 h-16 text-slate-200 mx-auto mb-6" />
                 <h2 className="text-xl font-bold text-slate-900 mb-2">No orders found</h2>
-                <p className="text-slate-500 mb-8">You haven't placed any orders yet.</p>
+                <p className="text-slate-500 mb-8">You haven&apos;t placed any orders yet.</p>
                 <button 
                   onClick={() => router.push('/products')}
                   className="bg-indigo-600 text-white px-8 py-4 rounded-full font-bold hover:bg-indigo-700 transition"
@@ -90,19 +100,19 @@ export default function ProfilePage() {
             ) : (
               <div className="space-y-6">
                 {orders.map((order) => (
-                  <div key={order.id} className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-md transition">
+                  <div key={order.id || order._id} className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-md transition">
                     <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
                       <div>
                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Order ID</p>
-                        <p className="font-bold text-slate-900">#{order.id}</p>
+                        <p className="font-bold text-slate-900">#{order.id || order._id?.substring(0, 8)}</p>
                       </div>
                       <div>
                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Date</p>
-                        <p className="font-bold text-slate-900">{new Date(order.date).toLocaleDateString()}</p>
+                        <p className="font-bold text-slate-900">{order.date ? new Date(order.date).toLocaleDateString() : (order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A')}</p>
                       </div>
                       <div>
                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Total</p>
-                        <p className="font-bold text-indigo-600">${order.total.toFixed(2)}</p>
+                        <p className="font-bold text-indigo-600">${(order.total || order.totalPrice || 0).toFixed(2)}</p>
                       </div>
                       <div>
                         <span className="px-4 py-1.5 bg-green-50 text-green-600 text-xs font-black uppercase tracking-widest rounded-full">
@@ -112,9 +122,9 @@ export default function ProfilePage() {
                     </div>
                     
                     <div className="flex space-x-4 overflow-x-auto pb-2">
-                      {order.items.map((item: any, idx: number) => (
-                        <div key={idx} className="w-16 h-16 rounded-xl bg-gray-50 flex-shrink-0 overflow-hidden border border-gray-100">
-                          <img src={item.image} alt="" className="w-full h-full object-cover" />
+                      {order.items?.map((item, idx) => (
+                        <div key={idx} className="relative w-16 h-16 rounded-xl bg-gray-50 flex-shrink-0 overflow-hidden border border-gray-100">
+                          <Image src={item.image} alt={item.name} fill className="object-cover" />
                         </div>
                       ))}
                     </div>
