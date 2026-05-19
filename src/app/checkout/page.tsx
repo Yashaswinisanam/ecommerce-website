@@ -249,7 +249,7 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     required
-                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 focus:border-indigo-600 outline-none text-xs font-bold transition"
+                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 outline-none text-xs font-bold transition"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   />
@@ -259,7 +259,7 @@ export default function CheckoutPage() {
                   <input
                     type="tel"
                     required
-                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 focus:border-indigo-600 outline-none text-xs font-bold transition"
+                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 outline-none text-xs font-bold transition"
                     value={formData.phone}
                     placeholder="+1 555-0199"
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -272,7 +272,7 @@ export default function CheckoutPage() {
                 <input
                   type="text"
                   required
-                  className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 focus:border-indigo-600 outline-none text-xs font-bold transition"
+                  className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 outline-none text-xs font-bold transition"
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 />
@@ -284,7 +284,7 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     required
-                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 focus:border-indigo-600 outline-none text-xs font-bold transition"
+                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 outline-none text-xs font-bold transition"
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   />
@@ -294,7 +294,7 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     required
-                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 focus:border-indigo-600 outline-none text-xs font-bold transition"
+                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 outline-none text-xs font-bold transition"
                     value={formData.postalCode}
                     onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
                   />
@@ -304,7 +304,7 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     required
-                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 focus:border-indigo-600 outline-none text-xs font-bold transition"
+                   className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 outline-none text-xs font-bold transition"
                     value={formData.country}
                     onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                   />
