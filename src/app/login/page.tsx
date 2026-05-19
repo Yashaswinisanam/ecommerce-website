@@ -5,11 +5,13 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useUser } from '@/context/UserContext';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
@@ -20,8 +22,7 @@ function LoginForm() {
     try {
       const { data } = await axios.post('/api/auth/login', { email, password });
       toast.success('Logged in successfully!');
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      login(data.user, data.accessToken);
       
       if (data.user.role === 'admin') {
         router.push('/admin');
