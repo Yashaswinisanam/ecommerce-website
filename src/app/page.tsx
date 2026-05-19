@@ -32,7 +32,7 @@ export default function HomePage() {
             transition={{ duration: 0.6 }}
           >
             <span className="inline-block px-4 py-1.5 mb-6 text-sm font-bold tracking-wider text-indigo-600 uppercase bg-indigo-100 rounded-full">
-              New Collection 2024
+              New Collection 2026
             </span>
             <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tight text-slate-900 leading-none">
               Style Elevated. <br />
