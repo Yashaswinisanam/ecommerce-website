@@ -22,7 +22,7 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden bg-slate-50">
+      <section className="relative min-h-screen flex items-center justify-center bg-slate-50 overflow-visible py-20">
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 to-white" />
         
         <div className="relative z-10 text-center px-6 max-w-4xl">
@@ -41,7 +41,7 @@ export default function HomePage() {
             <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
               Experience the next generation of e-commerce with our curated collection of premium essentials designed for modern life.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="relative z-20 mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/products" className="group bg-indigo-600 text-white px-8 py-4 rounded-full font-bold text-lg flex items-center hover:bg-indigo-700 transition shadow-xl shadow-indigo-200">
                 Shop Now
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
