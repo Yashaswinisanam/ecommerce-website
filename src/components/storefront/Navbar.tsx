@@ -65,4 +65,3 @@ export default function Navbar() {
     </nav>
   );
 }
-console.log("GIT_TEST");
